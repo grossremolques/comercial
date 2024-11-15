@@ -59,7 +59,7 @@ export default function CamionesHome() {
       }))
   };
   const handleOpenCamion = (data) => {
-    navigate(`/camiones/${data.trazabilidad}`, (data) => console.log(data))
+    navigate(`/camiones/${data.trazabilidad}`, {state: {camionData: data}})
   }
   return (
     <>
