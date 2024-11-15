@@ -1,0 +1,1 @@
+export const GET_CAMIONES = 'GET_CAMIONES'
