@@ -4,6 +4,7 @@ import TableComponent from "./TableComponent";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
+import { ModalComponent } from "./ModalComponent";
 export default function CamionesHome() {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm();
@@ -61,6 +62,9 @@ export default function CamionesHome() {
   const handleOpenCamion = (data) => {
     navigate(`/camiones/${data.trazabilidad}`, {state: {camionData: data}})
   }
+  const handleNewCamion = () => {
+    navigate(`/camiones/new-camion`)
+  }
   return (
     <>
       <Form onSubmit={handleSubmit(handleFilter)} className="my-3">
@@ -115,6 +119,16 @@ export default function CamionesHome() {
               <i className="bi bi-funnel-fill"></i> Filtrar
             </Button>
           </Col>
+          <Col sm={"auto"}>
+            <Button
+              size="sm"
+              variant="success"
+              type="button"
+              onClick={handleNewCamion}
+            >
+              <i className="bi bi-plus-lg"></i> Nuevo Camión
+            </Button>
+          </Col>
         </Row>
       </Form>
       <TableComponent
@@ -122,6 +136,7 @@ export default function CamionesHome() {
         columns={columns}
         handleOnRowClick={handleOpenCamion}
       />
+      
     </>
   );
 }

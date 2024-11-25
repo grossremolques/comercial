@@ -8,6 +8,7 @@ export class GoogleSheet {
     this.rowHead = props.rowHead;
     this.nameSheet = props.nameSheet;
     this.range = `${props.nameSheet}!A${this.rowHead}:ZZZ`;
+    this.description = props.description
   }
   async getResponse() {
     try {
@@ -19,17 +20,21 @@ export class GoogleSheet {
       });
       return result;
     } catch (e) {
-      window.alert(
-        `${this.nameSheet, this.range} - Code: ${e.result.error.code}, Message: ${e.result.error.message}`
-      );
-      console.log(e)
+      if(e.result.error.code === 401) {
+        window.location.reload()
+      }
       return e.result;
     }
   }
   async getData() {
     try {
       const result = await this.getResponse();
-      return getDataInJSON(result.values);
+      if(result.error) {
+        return result
+      }
+      else {
+        return getDataInJSON(result.values)
+      }
     } catch (e) {
       console.log(e);
     }
@@ -142,6 +147,19 @@ export class GoogleSheet {
     let newArray = array[0];
     newArray = Object.keys(newArray);
     return newArray.indexOf(key) + 1;
+  }
+  async getDataById(key, value) {
+    try {
+      const data = await this.getData();
+      const index = data.findIndex((item) => item[key] == value);
+      if (index >= 0) {
+        return data[index];
+      } else {
+        console.error("No se encontró el dato");
+      }
+    } catch (e) {
+      console.log(e);
+    }
   }
 }
 export class Email {

@@ -1,0 +1,27 @@
+[name='id_cliente'] {
+    max-width: 120px;
+}
+#modal-warning {
+    .modal-content {
+        border-color: #fd7e14 !important;
+        background-color: #faecc2 !important;
+    }
+    .modal-header {
+        border-bottom: #ffc107  1px solid!important;
+    }
+    .modal-footer {
+        border-bottom: #ffc107  1px solid!important;
+    }
+}
+#modal-success {
+    .modal-content {
+        border-color: #198754 !important;
+        background-color: #e9fdf4 !important;
+    }
+    .modal-header {
+        border-bottom: #97f3d7  1px solid!important;
+    }
+    .modal-footer {
+        border-top: #97f3d7  1px solid!important;
+    }
+}

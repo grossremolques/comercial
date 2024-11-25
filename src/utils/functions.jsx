@@ -43,4 +43,17 @@ export const dataJoin = (data1, data2, att1, att2) => {
   console.log(newArr)
   return newArr;
 }
+export const  createId = ({num, data, columnId}) => {
+  const today = new Date();
+  const year = today.getFullYear().toString().slice(2)
+    let IDs = data.filter(
+      (item) =>
+        item[columnId] &&
+        item[columnId].toString().startsWith(num) &&
+        item[columnId].toString().endsWith(year)
+    );
+    IDs = IDs.map((item) => Number(item[columnId].toString().slice(1,5)));
+    const ID = IDs.length < 1 ? 1 : Math.max(... IDs) + 1
+    return Number(`${num}${String(ID).padStart(4, "0")}${year}`); 
+}
 
