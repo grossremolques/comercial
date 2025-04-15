@@ -169,15 +169,6 @@ export function TemplateFormCamion({
                       readOnly
                       {...register("razon_social", { required: true })}
                     />
-                    <Button
-                      className=""
-                      variant="outline-info"
-                      onClick={() => {
-                        handleModalShow("modal-new-cliente");
-                      }}
-                    >
-                      <i className="bi bi-plus-lg"></i>
-                    </Button>
                   </InputGroup>
                   <div className="form-text text-primary">
                     Puede buscar por código o por CUIT. Se prioriza el codigo,
