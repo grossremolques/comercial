@@ -33,15 +33,12 @@ export const getDataInArray = (data, headers) => {
   return headers;
 }
 export const dataJoin = (data1, data2, att1, att2) => {
-  const newArr = data1.map((item) => {
-    data2.map(elem => {
-      if(item[att1] === elem[att2]) {
-        Object.assign(item, elem)
-      }
-    })
+  const data = [...data1];
+  data.map(item => {
+      const elem = data2.find(el => el[att2] === item[att1])
+      Object.assign(item, elem)
   })
-  console.log(newArr)
-  return newArr;
+ return data
 }
 export const  createId = ({num, data, columnId}) => {
   const today = new Date();

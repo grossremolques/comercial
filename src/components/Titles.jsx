@@ -1,6 +1,6 @@
-export function MainTitle({title, urlIcon}) {
+export function MainTitle({title, urlIcon, mt, mb}) {
     return (
-        <h2 classtitle="text-center" style={{ fontSize: "30px" }}>
+        <h2 className={`text-center mt-${mt} mb-${mb}`} style={{ fontSize: "30px" }}>
         <img
           src={urlIcon}
           alt={`icono de ${title}`}

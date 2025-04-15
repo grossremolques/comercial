@@ -34,10 +34,23 @@ export default function Navigation() {
             >
               <i className="bi bi-truck-front-fill"></i> Camiones
             </NavLink>
-            
-            <li className="nav-item">
+            <NavLink
+              className="nav-link"
+              to="/clientes"
+              style={{ color: "#6610f2" }}
+            >
+              <i className="bi bi-person-fill"></i> Clientes
+            </NavLink>
+            <NavLink
+              className="nav-link"
+              to="/unidades-gross"
+              style={{ color: "#198754" }}
+            >
+              <i className="bi bi-google"></i> Unidades Gross
+            </NavLink>
+            {/* <li className="nav-item">
               <a className="nav-link" target="_blank" href="https://grossremolques.github.io/ventas/#/clients/">Clientes</a>
-            </li>
+            </li> */}
             <li className="nav-item">
               <a className="nav-link" target="_blank" href="https://grossremolques.github.io/ventas/#/trailers/">Unidades 0 KM</a>
             </li>

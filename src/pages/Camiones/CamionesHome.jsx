@@ -1,10 +1,10 @@
-import { useCamiones } from "../context/Camiones/CamionesContext";
+import { useCamiones } from "../../context/Camiones/CamionesContext";
 import { useEffect, useState } from "react";
-import TableComponent from "./TableComponent";
+import TableComponent from "../../components/TableComponent";
 import { Form, Row, Col, Button } from "react-bootstrap";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { ModalComponent } from "./ModalComponent";
+import { ModalComponent } from "../../components/ModalComponent";
 export default function CamionesHome() {
   const navigate = useNavigate();
   const { register, handleSubmit } = useForm();

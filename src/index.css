@@ -1,6 +1,9 @@
 [name='id_cliente'] {
     max-width: 120px;
 }
+[name='cuit_cliente'] {
+    max-width: 170px;
+}
 #modal-warning {
     .modal-content {
         border-color: #fd7e14 !important;

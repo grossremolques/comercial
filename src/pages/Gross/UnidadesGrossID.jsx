@@ -1,29 +1,19 @@
 import { useLocation } from "react-router-dom";
-import { useCamiones } from "../context/Camiones/CamionesContext";
+import { useCamiones } from "../../context/Camiones/CamionesContext";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useClientes } from "../context/Clientes/ClientesContext";
-import { TemplateFormCamion } from "../templates/Camiones";
+import { useClientes } from "../../context/Clientes/ClientesContext";
+import { TemplateFormCamion } from "../../templates/Camiones";
 import { Button, Alert, Card, Row, Col } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useModal } from "../context/ModalContext";
-import { ModalComponent } from "../components/ModalComponent";
-import LoadingIcon from "../components/LoaderIcon";
+import { useModal } from "../../context/ModalContext";
+import { ModalComponent } from "../../components/ModalComponent";
+import LoadingIcon from "../../components/LoaderIcon";
+import TemplateFormUnidadGross from "../../templates/UnidadGross";
 
-export default function CamionID({}) {
-  const { handleModalShow, handleModalClose } = useModal();
-  const { getClienteById } = useClientes();
-  const { atributos, getAtributos, getCamionById, updateCamion } =
-    useCamiones();
-  const [cliente, setCliente] = useState({});
+export default function UnidadesGrossID({}) {
   const location = useLocation();
-  const { camionData } = location.state || {};
-  if (!camionData) {
-    const id = location.pathname.replace("/camiones/", "");
-    getCamionById(id);
-    console.log(id);
-  }
-
+  const { grossData } = location.state || {};
   const {
     register,
     handleSubmit,
@@ -31,23 +21,8 @@ export default function CamionID({}) {
     watch,
     setValue,
   } = useForm({
-    defaultValues: camionData,
+    defaultValues: grossData,
   });
-
-  useEffect(() => {
-    if (camionData?.id_cliente) {
-      getClienteById(camionData.id_cliente)
-        .then((data) => {
-          setCliente(data);
-          setValue("razon_social", data.razon_social); // Actualiza el estado con los datos del cliente
-        })
-        .catch((error) => {
-          console.error("Error obteniendo cliente:", error);
-        });
-    }
-    getAtributos();
-  }, []);
-
   const onSubmit = async (data) => {
     const isEmpty = Object.keys(dirtyFields).length < 1;
     if (isEmpty) {
@@ -60,7 +35,7 @@ export default function CamionID({}) {
           dataUpdate[item] = data[item];
         }
       }
-      const response = await updateCamion(dataUpdate, camionData.trazabilidad);
+      const response = await updateCamion(dataUpdate, grossData.trazabilidad);
       if (response.status === 200) {
         handleModalShow("modal-success");
       } else {
@@ -69,9 +44,35 @@ export default function CamionID({}) {
       console.log(response);
     }
   };
+  /* const { handleModalShow, handleModalClose } = useModal();
+  const { getClienteById } = useClientes();
+  const { atributos, getAtributos, getCamionById, updateCamion } =
+    useCamiones();
+  const [cliente, setCliente] = useState({});
+  
+  
+  
+
+  
+
+  useEffect(() => {
+    if (grossData?.id_cliente) {
+      getClienteById(grossData.id_cliente)
+        .then((data) => {
+          setCliente(data);
+          setValue("razon_social", data.razon_social); // Actualiza el estado con los datos del cliente
+        })
+        .catch((error) => {
+          console.error("Error obteniendo cliente:", error);
+        });
+    }
+    getAtributos();
+  }, []);
+
+   */
   return (
     <>
-      {camionData ? (
+      {grossData ? (
         <>
           <Row className="mt-4 text-start g-1">
             <Col>
@@ -81,7 +82,7 @@ export default function CamionID({}) {
                     Trazabilidad:{" "}
                     <span style={{ fontWeight: "400" }}>
                       {" "}
-                      {camionData?.trazabilidad
+                      {grossData?.trazabilidad
                         .toString()
                         .replace(/(\d{1})(\d{4})(\d{2})/, "$1.$2-$3")}
                     </span>
@@ -96,7 +97,7 @@ export default function CamionID({}) {
                     Registrado por:{" "}
                     <span style={{ fontWeight: "400" }}>
                       {" "}
-                      {camionData?.registrado_por}
+                      {grossData?.registrado_por}
                     </span>
                   </Card.Subtitle>
                 </Card.Body>
@@ -109,23 +110,24 @@ export default function CamionID({}) {
                     Fecha de creación:{" "}
                     <span style={{ fontWeight: "400" }}>
                       {" "}
-                      {camionData?.fecha_creacion}
+                      {grossData?.fecha}
                     </span>
                   </Card.Subtitle>
                 </Card.Body>
               </Card>
             </Col>
           </Row>
-          <TemplateFormCamion
+          <TemplateFormUnidadGross register={register} handleSubmit={handleSubmit} onSubmit={onSubmit} errors={errors} watch={watch} data={grossData}/>
+          {/* <TemplateFormCamion
             atributos={atributos}
             register={register}
-            camionData={camionData}
+            grossData={grossData}
             handleSubmit={handleSubmit}
             onSubmit={onSubmit}
             errors={errors}
             watch={watch}
             setValue={setValue}
-          />
+          /> */}
           <ModalComponent
             modalId="modal-info"
             title="ℹ️ Información"

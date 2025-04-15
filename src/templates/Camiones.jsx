@@ -1,13 +1,6 @@
 import IconChasis from "../assets/chasis.png";
 import IconDatos from "../assets/producto.png";
-import {
-  Form,
-  Card,
-  Row,
-  Col,
-  InputGroup,
-  Button,
-} from "react-bootstrap";
+import { Form, Card, Row, Col, InputGroup, Button } from "react-bootstrap";
 import { SubTitle } from "../components/Titles";
 import { LabelComponent, TextWarningForm } from "../components/TextWarningForm";
 import { useEffect } from "react";
@@ -80,12 +73,12 @@ export function TemplateFormCamion({
   watch,
   setValue,
 }) {
-  const {handleModalShow} = useModal()
+  const { handleModalShow } = useModal();
   const [dimensiones, setDimensiones] = useState(false);
   const { getClientes, clientes } = useClientes();
   useEffect(() => {
     getClientes();
-    setDimensiones(watch('dimensiones'))
+    setDimensiones(watch("dimensiones"));
   }, []);
   const onError = (data) => {
     console.log(data);
@@ -109,20 +102,35 @@ export function TemplateFormCamion({
       zeroValues[watch("parametro")].forEach((item) => setValue(item, "0"));
     }
   }, [watch("parametro")]);
-
+  const formattedCuit = () => {
+    const cuit = watch("cuit_cliente").replace(/-/g, ""); // Elimina guiones existentes
+    const format = cuit.replace(/(\d{2})(\d{8})(\d{1})/, "$1-$2-$3"); // Formatea el CUIT
+    setValue("cuit_cliente", format);
+  };
   const handleFindCliente = () => {
-    const cliente = clientes.find((item) => item.id == watch("id_cliente"));
+    let cliente;
+    if (watch("id_cliente") === "") {
+      formattedCuit()
+      cliente = clientes.find((item) => item.cuit === watch("cuit_cliente"));
+    } else {
+      cliente = clientes.find((item) => item.id == watch("id_cliente"));
+    }
+
     setValue("razon_social", cliente?.razon_social || "Cliente no encontrado");
   };
   const handleDimensions = () => {
     setDimensiones(!dimensiones);
-    setValue('dimensiones', !dimensiones)
+    setValue("dimensiones", !dimensiones);
   };
   useEffect(() => {
-    if(!dimensiones) {
-      formaChasis.map(item => setValue(item, ''))
+    if (!dimensiones) {
+      formaChasis.map((item) => setValue(item, ""));
     }
-  },[dimensiones])
+  }, [dimensiones]);
+  const handleRefreshClientes = () => {
+    getClientes();
+  };
+  
   return (
     <>
       {atributos.length > 0 && (
@@ -145,15 +153,36 @@ export function TemplateFormCamion({
                       })}
                     />
                     <Form.Control
+                      placeholder="CUIT"
+                      type="text"
+                      maxLength={13}
+                      {...register("cuit_cliente", {
+                        required: true,
+                        onChange: handleFindCliente,
+                        maxLength: 13,
+                        minLength: 13
+                      })}
+                    />
+                    <Form.Control
                       placeholder="Razón Social"
                       type="text"
                       readOnly
                       {...register("razon_social", { required: true })}
                     />
-                    {/* <Button className="" variant="outline-info" onClick={()=>{handleModalShow('modal-new-cliente')}}>
+                    <Button
+                      className=""
+                      variant="outline-info"
+                      onClick={() => {
+                        handleModalShow("modal-new-cliente");
+                      }}
+                    >
                       <i className="bi bi-plus-lg"></i>
-                    </Button> */}
+                    </Button>
                   </InputGroup>
+                  <div className="form-text text-primary">
+                    Puede buscar por código o por CUIT. Se prioriza el codigo,
+                    si está vacío se buscará por el CUIT
+                  </div>
                 </Col>
               </Row>
               <Col sm={3}>
@@ -242,24 +271,24 @@ export function TemplateFormCamion({
                       </Form.Group>
                       <Col className="d-flex align-items-end" sm={"auto"}>
                         <Button
-                        variant={dimensiones ? 'primary' : 'secondary'}
+                          variant={dimensiones ? "primary" : "secondary"}
                           type="button"
                           size="sm"
                           onClick={handleDimensions}
                         >
-                          {dimensiones ? 'Quitar Dimensiones': 'Agregar Dimensiones'}
+                          {dimensiones
+                            ? "Quitar Dimensiones"
+                            : "Agregar Dimensiones"}
                         </Button>
                       </Col>
                       <Form.Select
-                      className="d-none"
-                          size="sm"
-                          {...register("dimensiones")}
-                        >
-                          <option value={false}>No</option>
-                          <option value={true}>Sí</option>
-                          
-                        </Form.Select>
-
+                        className="d-none"
+                        size="sm"
+                        {...register("dimensiones")}
+                      >
+                        <option value={false}>No</option>
+                        <option value={true}>Sí</option>
+                      </Form.Select>
                     </Row>
                   </Card.Body>
                 </Card>
@@ -276,8 +305,8 @@ export function TemplateFormCamion({
                         <Form.Select
                           size="sm"
                           {...register("uso_actual", {
-                            required: { value: true},
-                            disabled: !dimensiones
+                            required: { value: true },
+                            disabled: !dimensiones,
                           })}
                         >
                           <option value="">Seleccione</option>
@@ -299,7 +328,10 @@ export function TemplateFormCamion({
                         <LabelComponent label={"Frenos"} required />
                         <Form.Select
                           size="sm"
-                          {...register("frenos", { required: true, disabled: !dimensiones })}
+                          {...register("frenos", {
+                            required: true,
+                            disabled: !dimensiones,
+                          })}
                         >
                           <option value="">Seleccione</option>
                           {atributos.map(
@@ -322,14 +354,17 @@ export function TemplateFormCamion({
                           <InputGroup.Text>Total</InputGroup.Text>
                           <Form.Control
                             type="number"
-                            {...register("tara_total", { required: true, disabled: !dimensiones })}
+                            {...register("tara_total", {
+                              required: true,
+                              disabled: !dimensiones,
+                            })}
                           />
                           <InputGroup.Text>Eje deltr</InputGroup.Text>
                           <Form.Control
                             type="number"
                             {...register("tara_eje_delantero", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                         </InputGroup>
@@ -341,7 +376,7 @@ export function TemplateFormCamion({
                           <Form.Select
                             {...register("suspension_delantera", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           >
                             <option value="">Seleccione</option>
@@ -359,7 +394,12 @@ export function TemplateFormCamion({
                             )}
                           </Form.Select>
                           <InputGroup.Text>Tras</InputGroup.Text>
-                          <Form.Select {...register("suspension_trasera", {required: true, disabled: !dimensiones})}>
+                          <Form.Select
+                            {...register("suspension_trasera", {
+                              required: true,
+                              disabled: !dimensiones,
+                            })}
+                          >
                             <option value="">Seleccione</option>
                             {atributos.map(
                               (atributo) =>
@@ -386,7 +426,7 @@ export function TemplateFormCamion({
                             type="number"
                             {...register("trocha_eje_delantero", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                           <InputGroup.Text>Eje tras</InputGroup.Text>
@@ -394,7 +434,7 @@ export function TemplateFormCamion({
                             type="number"
                             {...register("trocha_eje_trasero", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                         </InputGroup>
@@ -404,7 +444,10 @@ export function TemplateFormCamion({
                         <InputGroup size="sm">
                           <InputGroup.Text>Tipo</InputGroup.Text>
                           <Form.Select
-                            {...register("tipo_llanta", { required: true, disabled: !dimensiones })}
+                            {...register("tipo_llanta", {
+                              required: true,
+                              disabled: !dimensiones,
+                            })}
                           >
                             <option value="">Seleccione</option>
                             {atributos.map(
@@ -424,7 +467,7 @@ export function TemplateFormCamion({
                           <Form.Select
                             {...register("medida_llanta", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           >
                             <option value="">Seleccione</option>
@@ -449,7 +492,7 @@ export function TemplateFormCamion({
                           size="sm"
                           {...register("puente_cardan", {
                             required: true,
-                            disabled: !dimensiones
+                            disabled: !dimensiones,
                           })}
                         >
                           <option value="">Seleccione</option>
@@ -473,7 +516,10 @@ export function TemplateFormCamion({
                         <LabelComponent label={"Depresión chasis"} required />
                         <Form.Select
                           size="sm"
-                          {...register("depresion_chasis", { required: true, disabled: !dimensiones })}
+                          {...register("depresion_chasis", {
+                            required: true,
+                            disabled: !dimensiones,
+                          })}
                         >
                           <option value="">Seleccione</option>
                           {atributos.map(
@@ -501,7 +547,7 @@ export function TemplateFormCamion({
                             size="sm"
                             {...register("objeto_considerable", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           >
                             <option value="">Seleccione</option>
@@ -525,7 +571,7 @@ export function TemplateFormCamion({
                             disabled={watch("objeto_considerable") === "No"}
                             {...register("kg_objeto_considerable", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                         </InputGroup>
@@ -536,7 +582,10 @@ export function TemplateFormCamion({
                           type="text"
                           placeholder="Color"
                           size="sm"
-                          {...register("color_chasis", { required: true, disabled: !dimensiones })}
+                          {...register("color_chasis", {
+                            required: true,
+                            disabled: !dimensiones,
+                          })}
                         />
                       </Form.Group>
                     </Row>
@@ -547,7 +596,10 @@ export function TemplateFormCamion({
                           <InputGroup.Text>¿Posee?</InputGroup.Text>
                           <Form.Select
                             size="sm"
-                            {...register("carroceria", { required: true, disabled: !dimensiones })}
+                            {...register("carroceria", {
+                              required: true,
+                              disabled: !dimensiones,
+                            })}
                           >
                             <option value="">Seleccione</option>
                             {atributos.map(
@@ -570,7 +622,7 @@ export function TemplateFormCamion({
                             disabled={watch("carroceria") === "No"}
                             {...register("carrozado", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                           <InputGroup.Text>Peso</InputGroup.Text>
@@ -580,7 +632,7 @@ export function TemplateFormCamion({
                             disabled={watch("carroceria") === "No"}
                             {...register("peso", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                           <InputGroup.Text>Largo</InputGroup.Text>
@@ -590,7 +642,7 @@ export function TemplateFormCamion({
                             disabled={watch("carroceria") === "No"}
                             {...register("largo", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                           <InputGroup.Text>Largo cuchetin</InputGroup.Text>
@@ -600,7 +652,7 @@ export function TemplateFormCamion({
                             disabled={watch("carroceria") === "No"}
                             {...register("largo_cuchetin", {
                               required: true,
-                              disabled: !dimensiones
+                              disabled: !dimensiones,
                             })}
                           />
                         </InputGroup>
@@ -612,7 +664,7 @@ export function TemplateFormCamion({
             </Row>
             <Row className="g-2 mt-4">
               <Row className="g-1">
-                <Col sm={3}>
+                <Col sm={4}>
                   <SubTitle
                     title="Dimensiones (REG-CO-0016)"
                     urlIcon={IconChasis}
@@ -629,7 +681,10 @@ export function TemplateFormCamion({
                     <Col sm={"auto"}>
                       <Form.Select
                         size="sm"
-                        {...register("parametro", { required: true, disabled: !dimensiones })}
+                        {...register("parametro", {
+                          required: true,
+                          disabled: !dimensiones,
+                        })}
                       >
                         <option value="">Seleccione</option>
                         {atributos.map(
@@ -672,7 +727,7 @@ export function TemplateFormCamion({
                               size="sm"
                               {...register(item, {
                                 required: true,
-                                disabled: !dimensiones || isDisabled
+                                disabled: !dimensiones || isDisabled,
                               })}
                             />
                           </Form.Group>
@@ -699,7 +754,10 @@ export function TemplateFormCamion({
                             type="number"
                             placeholder="mm"
                             size="sm"
-                            {...register(item, { required: true, disabled: !dimensiones })}
+                            {...register(item, {
+                              required: true,
+                              disabled: !dimensiones,
+                            })}
                           />
                         </Form.Group>
                       ))}
@@ -707,6 +765,13 @@ export function TemplateFormCamion({
                   </Card.Body>
                 </Card>
               </Col>
+              {/* <Col sm="12" className="text-start">
+                <Form.Label className="text-primary">
+                  <i className="bi bi-file-earmark-arrow-down-fill"></i> Escanee
+                  el REG-CO-0016 e ingréselo
+                </Form.Label>
+                <Form.Control size="sm" type="file" {...register("reg_016")} />
+              </Col> */}
             </Row>
             {errors && (
               <TextWarningForm
@@ -716,7 +781,7 @@ export function TemplateFormCamion({
               />
             )}
             <Row className="my-3 text-end">
-              <Col>
+              <Col sm="auto">
                 <Button
                   type="submit"
                   variant="primary"
@@ -727,7 +792,7 @@ export function TemplateFormCamion({
               </Col>
             </Row>
           </Form>
-          {/* <ModalNewCliente/> */}
+          <ModalNewCliente handleRefreshClientes={handleRefreshClientes} />
         </>
       )}
     </>

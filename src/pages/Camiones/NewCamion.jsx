@@ -1,11 +1,11 @@
-import { useCamiones } from "../context/Camiones/CamionesContext";
+import { useCamiones } from "../../context/Camiones/CamionesContext";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { TemplateFormCamion } from "../templates/Camiones";
-import { useAuth } from "../context/AuthContext";
-import { ModalComponent } from "../components/ModalComponent";
-import { useModal } from "../context/ModalContext";
-import LoadingIcon from "../components/LoaderIcon";
+import { TemplateFormCamion } from "../../templates/Camiones";
+import { useAuth } from "../../context/AuthContext";
+import { ModalComponent } from "../../components/ModalComponent";
+import { useModal } from "../../context/ModalContext";
+import LoadingIcon from "../../components/LoaderIcon";
 import { useNavigate } from "react-router-dom";
 export default function NewCamion() {
   const navigate = useNavigate();
